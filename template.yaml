@@ -1,0 +1,43 @@
+AWSTemplateFormatVersion: '2010-09-09'
+Transform: AWS::Serverless-2016-10-31
+Description: iNaturalist NYC Observer API
+
+Parameters:
+  FunctionName:
+    Type: String
+    Default: inat-nyc-observer
+    Description: Name of the Lambda function
+
+Resources:
+  INatObserverFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      FunctionName: !Ref FunctionName
+      CodeUri: .
+      Handler: lambda_function.lambda_handler
+      Runtime: python3.9
+      Timeout: 30
+      MemorySize: 128
+      Environment:
+        Variables:
+          PYTHONPATH: /var/runtime
+      FunctionUrlConfig:
+        AuthType: NONE
+        Cors:
+          AllowCredentials: false
+          AllowHeaders:
+            - "*"
+          AllowMethods:
+            - GET
+            - POST
+          AllowOrigins:
+            - "*"
+          MaxAge: 86400
+
+Outputs:
+  INatObserverApi:
+    Description: "API Gateway endpoint URL for iNat Observer function"
+    Value: !GetAtt INatObserverFunctionUrl.FunctionUrl
+  INatObserverFunction:
+    Description: "iNat Observer Lambda Function ARN"
+    Value: !GetAtt INatObserverFunction.Arn
